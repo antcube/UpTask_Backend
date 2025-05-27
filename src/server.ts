@@ -1,6 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import { connectDB } from './config/db';
+import projectRoutes from './routes/projectRoutes';
 
 // Dotenv configuration
 dotenv.config();
@@ -14,8 +15,7 @@ connectDB();
 // Middleware to parse JSON bodies
 app.use(express.json());
 
-app.use('/', (req, res) => {
-    res.json({msg: 'From server'});
-})
+// Routes
+app.use('/api/projects', projectRoutes);
 
 export default app;
