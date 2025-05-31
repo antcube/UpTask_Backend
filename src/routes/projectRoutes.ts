@@ -2,6 +2,7 @@ import { Router } from "express";
 import { body, param } from "express-validator";
 import { ProjectController } from "../controllers/ProjectController";
 import { handleInputErrors } from "../middleware/validation";
+import { TaskController } from "../controllers/TaskController";
 
 // Create a new router instance
 const router = Router();
@@ -66,6 +67,12 @@ router.delete('/:id',
         .withMessage('Invalid project ID format'),
     handleInputErrors,
     ProjectController.deleteProject
+)
+
+
+/** Routes for Tasks */
+router.post('/:projectId/tasks',
+    TaskController.createTask
 )
 
 export default router;
