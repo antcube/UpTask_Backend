@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import Project from "../models/Project";
+import Task from "../models/Task";
 
 export class ProjectController {
     static createProject = async (req: Request, res: Response) => {
@@ -22,46 +23,32 @@ export class ProjectController {
     }
 
     static getProjectById = async (req: Request, res: Response) => {
-        const { id } = req.params;
-
         try {
-            const project = await Project.findById(id);
-            if(!project) {
-                res.status(404).json({ error: "Project not found" });
-                return;
-            }
-            res.status(200).json({ message: "Project retrieved successfully", data: project})
-            
+            res.status(200).json({ message: "Project retrieved successfully", data: req.project });
         } catch (error) {
             res.status(500).json({ error: "Failed to fetch project" });
         }
     }
 
     static updateProject = async (req: Request, res: Response) => {
-        const { id } = req.params;
         try {
-            const project = await Project.findByIdAndUpdate(id, req.body, { new: true });
-            if (!project) {
-                res.status(404).json({ error: "Project not found" });
-                return;
-            }
-            await project.save();
-            res.status(200).json({ message: "Project updated successfully", data: project});
+            // Update the project with the new data
+            Object.assign(req.project, req.body);
+            await req.project.save();
+            res.status(200).json({ message: "Project updated successfully", data: req.project });
         } catch (error) {
             res.status(500).json({ error: "Failed to update project" });
         }
     }
 
     static deleteProject = async (req: Request, res: Response) => {
-        const { id } = req.params;
         try {
-            const project = await Project.findById(id);
-            if (!project) {
-                res.status(404).json({ error: "Project not found" });
-                return;
-            }
-            await project.deleteOne();
-            res.status(200).json({ message: "Project deleted successfully" })
+            // Remove the project and its tasks
+            await Promise.allSettled([
+                req.project.deleteOne(),
+                Task.deleteMany({ project: req.project.id }) // Assuming Task model has a project field
+            ]);
+            res.status(200).json({ message: "Project deleted successfully" });
         } catch (error) {
             res.status(500).json({ error: "Failed to delete project" })
         }

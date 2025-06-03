@@ -1,11 +1,11 @@
 import mongoose, { Document, Schema, Types } from "mongoose";
 
 const taskStatus = {
-    PENDING: "Pending",
-    ON_HOLD: "OnHold",
-    IN_PROGRESS: "InProgress",
-    UNDER_REVIEW: "UnderReview",
-    COMPLETED: "Completed"
+    PENDING: "pending",
+    ON_HOLD: "onHold",
+    IN_PROGRESS: "inProgress",
+    UNDER_REVIEW: "underReview",
+    COMPLETED: "completed",
 } as const;
 
 export type TaskStatus = typeof taskStatus[keyof typeof taskStatus];
