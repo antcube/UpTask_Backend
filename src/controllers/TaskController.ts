@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import Project from "../models/Project";
 import Task from "../models/Task";
 
 export class TaskController {
@@ -7,7 +6,7 @@ export class TaskController {
         try {
             const task = new Task(req.body);
             task.project = req.project.id; // Associate the task with the project
-            req.project.tasks.push(task); // Add the task to the project's tasks array
+            req.project.tasks.push(task.id); // Add the task to the project's tasks array
             await Promise.allSettled([task.save(), req.project.save()]);
             res.status(201).json({ message: "Task created successfully", task });
         } catch (error) {
